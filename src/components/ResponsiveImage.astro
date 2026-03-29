@@ -1,0 +1,40 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: "lazy" | "eager";
+  width?: number;
+  height?: number;
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  widths = [640, 960, 1280, 1920],
+  sizes = "(max-width: 640px) 100vw, (max-width: 1280px) 80vw, 1280px",
+  loading = "lazy",
+  width,
+  height,
+  class: className,
+} = Astro.props;
+
+const webpSrcset = widths
+  .map((w) => `${src}-${w}w.webp ${w}w`)
+  .join(", ");
+---
+
+<picture>
+  <source type="image/webp" srcset={webpSrcset} sizes={sizes} />
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    decoding="async"
+    class={className}
+  />
+</picture>

@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import StatsBar from '../components/StatsBar.astro';
+import CTABanner from '../components/CTABanner.astro';
+import Footer from '../components/Footer.astro';
+
+const stats = [
+  { value: '50+', label: 'Projects Delivered' },
+  { value: '10+', label: 'Years Experience' },
+  { value: '99%', label: 'Client Satisfaction' },
+  { value: '24/7', label: 'Support' },
+];
+---
+
+<BaseLayout
+  title="About Us | Brand"
+  description="Learn about our team, mission, and values."
+>
+  <Header />
+  <main>
+    <section class="bg-primary-50 px-4 py-16 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-4xl text-center">
+        <h1 class="font-heading text-4xl font-bold text-primary-900 md:text-5xl">About Us</h1>
+        <p class="mx-auto mt-4 max-w-2xl text-lg text-primary-500">
+          We're a team dedicated to building exceptional solutions.
+        </p>
+      </div>
+    </section>
+
+    <section class="px-4 py-16 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="font-heading text-2xl font-bold text-primary-900">Our Story</h2>
+        <div class="mt-4 space-y-4 text-primary-600">
+          <p>TODO: Write your company story here. Share your mission, vision, and what drives your team.</p>
+          <p>TODO: Describe your approach and what makes you different from competitors.</p>
+        </div>
+
+        <h2 class="mt-12 font-heading text-2xl font-bold text-primary-900">Our Values</h2>
+        <div class="mt-6 grid gap-6 sm:grid-cols-2">
+          <div class="rounded-lg border border-primary-200 p-6">
+            <h3 class="font-heading text-lg font-semibold text-primary-900">Innovation</h3>
+            <p class="mt-2 text-sm text-primary-500">TODO: Describe this value.</p>
+          </div>
+          <div class="rounded-lg border border-primary-200 p-6">
+            <h3 class="font-heading text-lg font-semibold text-primary-900">Quality</h3>
+            <p class="mt-2 text-sm text-primary-500">TODO: Describe this value.</p>
+          </div>
+          <div class="rounded-lg border border-primary-200 p-6">
+            <h3 class="font-heading text-lg font-semibold text-primary-900">Transparency</h3>
+            <p class="mt-2 text-sm text-primary-500">TODO: Describe this value.</p>
+          </div>
+          <div class="rounded-lg border border-primary-200 p-6">
+            <h3 class="font-heading text-lg font-semibold text-primary-900">Partnership</h3>
+            <p class="mt-2 text-sm text-primary-500">TODO: Describe this value.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <StatsBar stats={stats} />
+
+    <CTABanner
+      headline="Want to work with us?"
+      ctaText="Get in Touch"
+      ctaHref="/contact"
+      variant="accent"
+    />
+  </main>
+  <Footer />
+</BaseLayout>

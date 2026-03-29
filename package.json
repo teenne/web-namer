@@ -1,0 +1,32 @@
+{
+  "name": "web-namer",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Marketing website for NameR",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "generate:og": "tsx scripts/generate-og-images.ts",
+    "optimize:images": "tsx scripts/optimize-images.ts",
+    "prebuild": "npm run generate:og"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/rss": "^4.0.17",
+    "@astrojs/sitemap": "^3.7.1",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^5.17.1",
+    "mdast-util-to-string": "^4.0.0",
+    "reading-time": "^1.5.0",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "satori": "^0.12.0",
+    "sharp": "^0.33.0",
+    "tsx": "^4.19.0"
+  }
+}

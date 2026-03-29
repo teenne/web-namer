@@ -1,0 +1,67 @@
+---
+// GDPR cookie consent banner — renders hidden by default, shown via JS if consent not yet given.
+---
+
+<div
+  id="cookie-banner"
+  class="fixed inset-x-0 bottom-0 z-40 hidden"
+  role="alert"
+  aria-live="polite"
+>
+  <div class="border-t border-primary-200 bg-white/95 backdrop-blur-sm dark:border-primary-700 dark:bg-primary-900/95">
+    <div class="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-4 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
+      <p class="text-sm text-primary-700 dark:text-primary-300">
+        We use cookies to improve your experience. By continuing to use this site you consent to our
+        use of cookies in accordance with our
+        <a href="/privacy" class="font-medium text-accent-600 underline hover:text-accent-500">
+          privacy policy</a>.
+      </p>
+      <div class="flex shrink-0 gap-3">
+        <button
+          id="cookie-decline"
+          type="button"
+          class="rounded-md border border-primary-300 bg-white px-4 py-2 text-sm font-medium text-primary-700 transition-colors hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:border-primary-600 dark:bg-primary-800 dark:text-primary-300 dark:hover:bg-primary-700"
+        >
+          Decline
+        </button>
+        <button
+          id="cookie-accept"
+          type="button"
+          class="rounded-md bg-accent-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+        >
+          Accept
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initCookieBanner(): void {
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('cookie-accept');
+    const declineBtn = document.getElementById('cookie-decline');
+
+    if (!banner || !acceptBtn || !declineBtn) return;
+
+    const consent = localStorage.getItem('cookie_consent');
+
+    if (!consent) {
+      banner.classList.remove('hidden');
+    }
+
+    function hideBanner(value: 'accepted' | 'declined'): void {
+      localStorage.setItem('cookie_consent', value);
+      banner!.classList.add('hidden');
+      window.dispatchEvent(
+        new CustomEvent('cookie-consent', { detail: value })
+      );
+    }
+
+    acceptBtn.addEventListener('click', () => hideBanner('accepted'));
+    declineBtn.addEventListener('click', () => hideBanner('declined'));
+  }
+
+  initCookieBanner();
+  document.addEventListener('astro:after-swap', initCookieBanner);
+</script>

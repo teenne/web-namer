@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import CTABanner from '../../components/CTABanner.astro';
+import Footer from '../../components/Footer.astro';
+
+const services = await getCollection('services', ({ data }) =>
+  import.meta.env.PROD ? !data.draft : true
+);
+services.sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Services | Brand"
+  description="Explore our range of professional services."
+>
+  <Header />
+  <main>
+    <section class="bg-primary-50 px-4 py-16 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-4xl text-center">
+        <h1 class="font-heading text-4xl font-bold text-primary-900 md:text-5xl">Our Services</h1>
+        <p class="mx-auto mt-4 max-w-2xl text-lg text-primary-500">
+          Comprehensive solutions tailored to your needs.
+        </p>
+      </div>
+    </section>
+
+    <section class="px-4 py-12 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-6xl">
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {services.map((service) => (
+            <a href={`/services/${service.id}`} class="group rounded-xl border border-primary-200 p-6 transition-shadow hover:shadow-lg">
+              <h3 class="font-heading text-xl font-semibold text-primary-900 group-hover:text-accent-600">{service.data.title}</h3>
+              <p class="mt-2 text-primary-500">{service.data.description}</p>
+              {service.data.features.length > 0 && (
+                <ul class="mt-4 space-y-2">
+                  {service.data.features.map((feature) => (
+                    <li class="flex items-start gap-2 text-sm text-primary-600">
+                      <svg class="mt-0.5 h-4 w-4 shrink-0 text-accent-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <span class="mt-4 inline-flex items-center text-sm font-medium text-accent-600">
+                Learn more →
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <CTABanner
+      headline="Need a custom solution?"
+      ctaText="Contact Us"
+      ctaHref="/contact"
+      variant="accent"
+    />
+  </main>
+  <Footer />
+</BaseLayout>

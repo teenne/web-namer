@@ -1,0 +1,124 @@
+---
+import '../styles/global.css';
+import CookieBanner from '../components/CookieBanner.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  datePublished?: string;
+  jsonLd?: object;
+  keywords?: string[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = '', // TODO: Set a default brand description
+  ogImage = '', // TODO: Set a default OG image path
+  ogType = 'website',
+  datePublished,
+  jsonLd,
+  keywords,
+  noindex = false,
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+// TODO: Replace placeholder values with your brand information
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Brand', // TODO: Replace with organization name
+  url: Astro.site?.href ?? 'https://example.com', // TODO: Update with production URL
+  logo: '', // TODO: Add logo URL
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '', // TODO: Add street address
+    addressLocality: '', // TODO: Add city
+    postalCode: '', // TODO: Add postal code
+    addressCountry: '', // TODO: Add country code (e.g. "US")
+  },
+  telephone: '', // TODO: Add phone number
+  email: '', // TODO: Add contact email
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {keywords && keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:locale" content="en_US" />
+    {description && <meta property="og:description" content={description} />}
+    {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site).href} />}
+    {datePublished && <meta property="article:published_time" content={datePublished} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    {description && <meta name="twitter:description" content={description} />}
+    {ogImage && <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />}
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#0ea5e9" />
+
+    <!-- Organization JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
+
+    <!-- Additional JSON-LD -->
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    <!-- PostHog Analytics (only when configured) -->
+    {import.meta.env.PUBLIC_POSTHOG_KEY && (
+      <script
+        is:inline
+        define:vars={{ phKey: import.meta.env.PUBLIC_POSTHOG_KEY }}
+      >
+        // PostHog will be initialized by tracking.ts
+        window.__POSTHOG_KEY = phKey;
+      </script>
+    )}
+  </head>
+  <body class="min-h-screen bg-white dark:bg-dark-bg">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-accent-500 focus:px-4 focus:py-2 focus:text-white focus:outline-none">
+      Skip to main content
+    </a>
+    <slot />
+    <CookieBanner />
+  </body>
+</html>

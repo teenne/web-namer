@@ -1,0 +1,67 @@
+---
+interface Row {
+  feature: string;
+  us: boolean | string;
+  competitors: (boolean | string)[];
+}
+
+interface Props {
+  ourName: string;
+  competitors: string[];
+  rows: Row[];
+}
+
+const { ourName, competitors, rows } = Astro.props;
+
+function renderCell(value: boolean | string): { html: string; className: string } {
+  if (typeof value === 'boolean') {
+    return value
+      ? { html: '<span class="sr-only">Yes</span><span aria-hidden="true" class="text-green-600 font-bold text-lg">&#10003;</span>', className: 'text-center' }
+      : { html: '<span class="sr-only">No</span><span aria-hidden="true" class="text-red-500 font-bold text-lg">&#10007;</span>', className: 'text-center' };
+  }
+  return { html: value, className: 'text-center text-sm text-gray-600 dark:text-gray-400' };
+}
+---
+
+<section class="py-16 px-4">
+  <div class="mx-auto max-w-5xl">
+    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-primary-700">
+      <table class="w-full min-w-[600px] border-collapse text-left">
+        <thead>
+          <tr class="border-b border-gray-200 bg-gray-50 dark:border-primary-700 dark:bg-primary-900">
+            <th class="sticky left-0 z-10 bg-gray-50 px-6 py-4 text-sm font-semibold text-gray-700 dark:bg-primary-900 dark:text-gray-300">
+              Feature
+            </th>
+            <th class="bg-accent-50 px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:bg-accent-500/10 dark:text-white">
+              {ourName}
+            </th>
+            {competitors.map((name) => (
+              <th class="px-6 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                {name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => {
+            const usCell = renderCell(row.us);
+            return (
+              <tr class:list={['border-b border-gray-100 dark:border-primary-800', i % 2 === 1 ? 'bg-gray-50/50 dark:bg-primary-900/50' : '']}>
+                <td class="sticky left-0 z-10 bg-inherit px-6 py-4 text-sm font-medium text-gray-800 dark:text-gray-200">
+                  {row.feature}
+                </td>
+                <td class:list={['bg-accent-50/50 px-6 py-4 dark:bg-accent-500/5', usCell.className]} set:html={usCell.html} />
+                {row.competitors.map((comp) => {
+                  const cell = renderCell(comp);
+                  return (
+                    <td class:list={['px-6 py-4', cell.className]} set:html={cell.html} />
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

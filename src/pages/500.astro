@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Server Error | Brand"
+  description="Something went wrong on our end."
+>
+  <Header />
+
+  <main id="main-content">
+    <section class="flex min-h-[60vh] items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-lg text-center">
+        <p class="font-heading text-6xl font-bold text-accent-500 md:text-8xl">500</p>
+        <h1 class="mt-4 font-heading text-3xl font-bold text-primary-900 dark:text-white md:text-4xl">
+          Server Error
+        </h1>
+        <p class="mt-4 text-lg text-primary-500 dark:text-primary-400">
+          Something went wrong on our end. Please try again later or contact us if the problem persists.
+        </p>
+        <div class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a
+            href="/"
+            class="inline-flex items-center rounded-md bg-accent-500 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-accent-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+          >
+            Go Home
+          </a>
+          <a
+            href="/contact"
+            class="inline-flex items-center rounded-md border-2 border-primary-300 px-6 py-3 text-base font-semibold text-primary-700 transition-colors hover:border-primary-400 hover:bg-primary-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 dark:border-primary-600 dark:text-primary-300 dark:hover:border-primary-500 dark:hover:bg-primary-800"
+          >
+            Contact Us
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

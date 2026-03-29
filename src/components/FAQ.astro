@@ -1,0 +1,57 @@
+---
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: FaqItem[];
+  sectionTitle?: string;
+}
+
+const { items, sectionTitle } = Astro.props;
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+---
+
+<section class="faq py-16 px-4">
+  <div class="mx-auto max-w-3xl">
+    {sectionTitle && (
+      <h2 class="mb-10 text-center font-heading text-3xl font-bold text-gray-900 dark:text-white">
+        {sectionTitle}
+      </h2>
+    )}
+
+    <div class="divide-y divide-gray-200 dark:divide-primary-700">
+      {items.map((item) => (
+        <details class="group py-4">
+          <summary class="flex cursor-pointer list-none items-center justify-between font-semibold text-gray-900 [&::-webkit-details-marker]:hidden dark:text-white">
+            <span>{item.question}</span>
+            <span class="ml-4 shrink-0 text-gray-400 transition-transform duration-200 group-open:rotate-45 dark:text-primary-500">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="10" y1="4" x2="10" y2="16" />
+                <line x1="4" y1="10" x2="16" y2="10" />
+              </svg>
+            </span>
+          </summary>
+          <div class="prose prose-sm pt-2 text-gray-600 dark:text-gray-400">
+            <p>{item.answer}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+</section>

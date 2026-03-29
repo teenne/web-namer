@@ -1,0 +1,176 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import Footer from '../../components/Footer.astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getCollection('blog', ({ data }) =>
+    import.meta.env.PROD ? !data.draft : true
+  );
+  posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  return paginate(posts, { pageSize: 9 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const allPosts = page.data;
+const featuredPosts = page.currentPage === 1
+  ? allPosts.filter((p) => p.data.featured)
+  : [];
+const regularPosts = page.currentPage === 1
+  ? allPosts.filter((p) => !p.data.featured)
+  : allPosts;
+
+// Extract unique tags for filter buttons (from current page only for performance)
+const allTags = [...new Set(page.data.flatMap((p) => p.data.tags))].sort();
+---
+
+<BaseLayout
+  title={`Blog${page.currentPage > 1 ? ` — Page ${page.currentPage}` : ''} | Brand`}
+  description="News, updates, and insights from our team."
+>
+  <Header />
+
+  <main id="main-content">
+    <section class="bg-primary-50 px-4 py-16 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-4xl text-center">
+        <h1 class="font-heading text-4xl font-bold text-primary-900 md:text-5xl">Blog</h1>
+        <p class="mx-auto mt-4 max-w-2xl text-lg text-primary-500">
+          News, updates, and insights from our team
+        </p>
+      </div>
+    </section>
+
+    <!-- Featured Posts (page 1 only) -->
+    {featuredPosts.length > 0 && (
+      <section class="border-b border-primary-200 px-4 py-12 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-6xl">
+          <h2 class="mb-6 font-heading text-xl font-semibold text-primary-900">Featured</h2>
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+            {featuredPosts.map((post) => (
+              <BlogCard
+                title={post.data.title}
+                description={post.data.description}
+                date={post.data.date}
+                href={`/blog/${post.id}`}
+                category={post.data.category}
+                image={post.data.image}
+                imageAlt={post.data.image_alt}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Tag Filter (page 1 only) -->
+    {page.currentPage === 1 && allTags.length > 0 && (
+      <section class="px-4 pt-12 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-6xl">
+          <div class="flex flex-wrap justify-center gap-2" role="tablist" aria-label="Filter posts by tag">
+            <button
+              type="button"
+              class="tag-btn rounded-full bg-accent-500 px-5 py-2 text-sm font-medium text-white transition-colors"
+              data-tag="all"
+              role="tab"
+              aria-selected="true"
+            >
+              All
+            </button>
+            {allTags.map((tag) => (
+              <button
+                type="button"
+                class="tag-btn rounded-full bg-primary-100 px-5 py-2 text-sm font-medium text-primary-700 transition-colors hover:bg-primary-200"
+                data-tag={tag}
+                role="tab"
+                aria-selected="false"
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Blog Grid -->
+    <section class="px-4 py-12 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-6xl">
+        {regularPosts.length > 0 ? (
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3" id="blog-grid">
+            {regularPosts.map((post) => (
+              <div class="blog-item" data-tags={JSON.stringify(post.data.tags)}>
+                <BlogCard
+                  title={post.data.title}
+                  description={post.data.description}
+                  date={post.data.date}
+                  href={`/blog/${post.id}`}
+                  category={post.data.category}
+                  image={post.data.image}
+                  imageAlt={post.data.image_alt}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p class="py-12 text-center text-lg text-primary-500">
+            No blog posts yet. Check back soon!
+          </p>
+        )}
+
+        <p class="mt-8 hidden text-center text-primary-500" id="no-posts">
+          No posts found for this tag.
+        </p>
+
+        <Pagination
+          currentPage={page.currentPage}
+          totalPages={page.lastPage}
+          baseUrl="/blog"
+        />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  function initTagFilters(): void {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-btn');
+    const items = document.querySelectorAll<HTMLElement>('.blog-item');
+    const noPostsEl = document.getElementById('no-posts');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tag = btn.dataset.tag;
+
+        buttons.forEach((b) => {
+          b.classList.remove('bg-accent-500', 'text-white');
+          b.classList.add('bg-primary-100', 'text-primary-700');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.remove('bg-primary-100', 'text-primary-700');
+        btn.classList.add('bg-accent-500', 'text-white');
+        btn.setAttribute('aria-selected', 'true');
+
+        let visibleCount = 0;
+        items.forEach((item) => {
+          const tags: string[] = JSON.parse(item.dataset.tags || '[]');
+          const matches = tag === 'all' || tags.includes(tag!);
+          item.style.display = matches ? '' : 'none';
+          if (matches) visibleCount++;
+        });
+
+        if (noPostsEl) {
+          noPostsEl.classList.toggle('hidden', visibleCount > 0);
+        }
+      });
+    });
+  }
+
+  initTagFilters();
+  document.addEventListener('astro:after-swap', initTagFilters);
+</script>

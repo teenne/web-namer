@@ -1,0 +1,334 @@
+---
+import DarkModeToggle from './DarkModeToggle.astro';
+
+const currentPath = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  if (href === '/') {
+    return currentPath === '/' || currentPath === '';
+  }
+  return currentPath.startsWith(href);
+}
+
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+interface DropdownItem {
+  label: string;
+  href: string;
+  description: string;
+}
+
+const navLinks: NavLink[] = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/contact' },
+];
+
+// TODO: Replace with actual product/service links
+const productLinks: DropdownItem[] = [
+  {
+    label: 'Product One',
+    href: '/products/product-one',
+    description: 'Brief description of your first product or service.',
+  },
+  {
+    label: 'Product Two',
+    href: '/products/product-two',
+    description: 'Brief description of your second product or service.',
+  },
+  {
+    label: 'Product Three',
+    href: '/products/product-three',
+    description: 'Brief description of your third product or service.',
+  },
+];
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-50 bg-white transition-shadow duration-200 dark:bg-primary-950"
+  role="banner"
+>
+  <nav
+    class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"
+    aria-label="Main navigation"
+  >
+    <!-- Logo / Brand -->
+    <a href="/" class="font-heading text-xl font-bold text-primary-900 dark:text-white" aria-label="Brand — Go to homepage">
+      Brand {/* TODO: Replace with logo or brand name */}
+    </a>
+
+    <!-- Desktop Navigation -->
+    <div class="hidden items-center gap-1 lg:flex">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'rounded-md px-3 py-2 text-sm font-medium transition-colors',
+            isActive(link.href)
+              ? 'text-accent-600'
+              : 'text-primary-700 hover:text-accent-600 dark:text-primary-300 dark:hover:text-accent-400',
+          ]}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+        >
+          <span class="relative">
+            {link.label}
+            <span
+              class:list={[
+                'absolute -bottom-1 left-0 h-0.5 bg-accent-500 transition-all duration-200',
+                isActive(link.href) ? 'w-full' : 'w-0 group-hover:w-full',
+              ]}
+            />
+          </span>
+        </a>
+      ))}
+
+      <!-- Products Dropdown -->
+      <div class="group relative">
+        <button
+          type="button"
+          class:list={[
+            'flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+            isActive('/products')
+              ? 'text-accent-600'
+              : 'text-primary-700 hover:text-accent-600 dark:text-primary-300 dark:hover:text-accent-400',
+          ]}
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          Products
+          <svg
+            class="h-4 w-4 transition-transform group-hover:rotate-180"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <div
+          class="invisible absolute left-0 top-full z-50 w-72 rounded-lg border border-primary-200 bg-white p-2 opacity-0 shadow-lg transition-all duration-150 group-hover:visible group-hover:opacity-100 dark:border-primary-700 dark:bg-primary-900"
+          role="menu"
+        >
+          {productLinks.map((item) => (
+            <a
+              href={item.href}
+              class="block rounded-md px-4 py-3 transition-colors hover:bg-primary-50 dark:hover:bg-primary-800"
+              role="menuitem"
+            >
+              <span class="block text-sm font-semibold text-primary-900 dark:text-white">{item.label}</span>
+              <span class="mt-0.5 block text-xs text-primary-500 dark:text-primary-400">{item.description}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Dark Mode Toggle -->
+      <DarkModeToggle />
+
+      <!-- CTA Button -->
+      <a
+        href="/contact"
+        class="ml-4 inline-flex items-center rounded-md bg-accent-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+      >
+        Contact Us
+      </a>
+    </div>
+
+    <!-- Mobile Hamburger -->
+    <button
+      id="mobile-menu-btn"
+      type="button"
+      class="inline-flex items-center justify-center rounded-md p-2 text-primary-700 hover:bg-primary-100 dark:text-primary-300 dark:hover:bg-primary-800 lg:hidden"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+      aria-label="Open main menu"
+    >
+      <!-- Hamburger icon -->
+      <svg
+        id="hamburger-icon"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <!-- Close icon -->
+      <svg
+        id="close-icon"
+        class="hidden h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div
+    id="mobile-menu"
+    class="hidden border-t border-primary-200 bg-white dark:border-primary-700 dark:bg-primary-950 lg:hidden"
+    role="navigation"
+    aria-label="Mobile navigation"
+  >
+    <div class="space-y-1 px-4 pb-4 pt-2">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'block rounded-md px-3 py-2 text-base font-medium transition-colors',
+            isActive(link.href)
+              ? 'bg-accent-500/10 text-accent-600 dark:bg-accent-500/20'
+              : 'text-primary-700 hover:bg-primary-50 hover:text-accent-600 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-accent-400',
+          ]}
+          aria-current={isActive(link.href) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+
+      <!-- Mobile Products Section -->
+      <div class="px-3 py-2">
+        <span class="block text-xs font-semibold uppercase tracking-wider text-primary-400 dark:text-primary-500">
+          Products
+        </span>
+        <div class="mt-2 space-y-1">
+          {productLinks.map((item) => (
+            <a
+              href={item.href}
+              class="block rounded-md px-3 py-2 text-sm text-primary-700 transition-colors hover:bg-primary-50 hover:text-accent-600 dark:text-primary-300 dark:hover:bg-primary-800 dark:hover:text-accent-400"
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Dark Mode Toggle (mobile) -->
+      <div class="px-3">
+        <DarkModeToggle />
+      </div>
+
+      <!-- Mobile CTA -->
+      <a
+        href="/contact"
+        class="block rounded-md bg-accent-500 px-3 py-2 text-center text-base font-semibold text-white transition-colors hover:bg-accent-600"
+      >
+        Contact Us
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  function initHeader(): void {
+    const header = document.getElementById('site-header');
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    if (!header || !menuBtn || !mobileMenu || !hamburgerIcon || !closeIcon) return;
+
+    // Scroll shadow
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 4) {
+            header.classList.add('shadow-md');
+          } else {
+            header.classList.remove('shadow-md');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    let previouslyFocused: HTMLElement | null = null;
+
+    function openMenu() {
+      previouslyFocused = document.activeElement as HTMLElement;
+      mobileMenu.classList.remove('hidden');
+      hamburgerIcon.classList.add('hidden');
+      closeIcon.classList.remove('hidden');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+
+      const focusableEls = mobileMenu.querySelectorAll<HTMLElement>(
+        'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusableEls.length) focusableEls[0].focus();
+    }
+
+    function closeMenu() {
+      mobileMenu.classList.add('hidden');
+      hamburgerIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      previouslyFocused?.focus();
+    }
+
+    menuBtn.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    // Focus trap
+    mobileMenu.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeMenu();
+        return;
+      }
+
+      if (e.key !== 'Tab') return;
+
+      const focusableEls = mobileMenu.querySelectorAll<HTMLElement>(
+        'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusableEls.length) return;
+
+      const firstEl = focusableEls[0];
+      const lastEl = focusableEls[focusableEls.length - 1];
+
+      if (e.shiftKey && document.activeElement === firstEl) {
+        e.preventDefault();
+        lastEl.focus();
+      } else if (!e.shiftKey && document.activeElement === lastEl) {
+        e.preventDefault();
+        firstEl.focus();
+      }
+    });
+
+    // Close on Escape from anywhere
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+        closeMenu();
+      }
+    });
+  }
+
+  // Run on initial load and on Astro client-side navigation
+  initHeader();
+  document.addEventListener('astro:after-swap', initHeader);
+</script>

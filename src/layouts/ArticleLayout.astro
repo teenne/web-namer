@@ -1,0 +1,49 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ShareButtons from '../components/ShareButtons.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  showNewsletter?: boolean;
+  jsonLd?: object;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  showNewsletter = true,
+  jsonLd,
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com').toString();
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <Header />
+
+  <main>
+    <article class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <slot />
+    </article>
+
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <ShareButtons title={title} url={canonicalUrl} />
+    </div>
+
+    {showNewsletter && <NewsletterSignup />}
+  </main>
+
+  <Footer />
+</BaseLayout>

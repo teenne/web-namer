@@ -1,0 +1,122 @@
+---
+interface Tab {
+  id: string;
+  label: string;
+  description: string;
+  icon?: string;
+}
+
+interface Props {
+  tabs: Tab[];
+}
+
+const { tabs } = Astro.props;
+---
+
+<section class="py-16 px-4">
+  <div class="mx-auto max-w-4xl">
+    <!-- Tab buttons -->
+    <div
+      role="tablist"
+      aria-label="Problem tabs"
+      class="flex flex-col gap-0 border-b border-gray-200 dark:border-primary-700 md:flex-row"
+    >
+      {tabs.map((tab, i) => (
+        <button
+          role="tab"
+          type="button"
+          id={`tab-${tab.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-controls={`panel-${tab.id}`}
+          tabindex={i === 0 ? 0 : -1}
+          class:list={[
+            'problem-tab flex items-center gap-2 px-5 py-3 text-sm font-medium transition-colors duration-150',
+            'border-l-2 md:border-b-2 md:border-l-0',
+            i === 0
+              ? 'border-accent-500 font-semibold text-accent-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
+          ]}
+        >
+          {tab.icon && <span class="shrink-0" set:html={tab.icon} />}
+          <span>{tab.label}</span>
+        </button>
+      ))}
+    </div>
+
+    <!-- Tab panels -->
+    {tabs.map((tab, i) => (
+      <div
+        role="tabpanel"
+        id={`panel-${tab.id}`}
+        aria-labelledby={`tab-${tab.id}`}
+        class:list={['mt-6 text-gray-600 dark:text-gray-400', i !== 0 && 'hidden']}
+        tabindex={0}
+      >
+        <p>{tab.description}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  const tablist = document.querySelector<HTMLElement>('[role="tablist"]');
+  if (tablist) {
+    const tabButtons = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = tabButtons.map((btn) =>
+      document.getElementById(btn.getAttribute('aria-controls') ?? '')
+    );
+
+    function activateTab(index: number) {
+      tabButtons.forEach((btn, i) => {
+        const isActive = i === index;
+        btn.setAttribute('aria-selected', String(isActive));
+        btn.tabIndex = isActive ? 0 : -1;
+
+        // Reset styling classes
+        btn.classList.remove(
+          'border-accent-500', 'font-semibold', 'text-accent-600',
+          'border-transparent', 'text-gray-500'
+        );
+
+        if (isActive) {
+          btn.classList.add('border-accent-500', 'font-semibold', 'text-accent-600');
+        } else {
+          btn.classList.add('border-transparent', 'text-gray-500');
+        }
+
+        const panel = panels[i];
+        if (panel) {
+          panel.classList.toggle('hidden', !isActive);
+        }
+      });
+    }
+
+    tabButtons.forEach((btn, i) => {
+      btn.addEventListener('click', () => activateTab(i));
+
+      btn.addEventListener('keydown', (e: KeyboardEvent) => {
+        const isVertical = window.innerWidth < 768;
+        const prevKey = isVertical ? 'ArrowUp' : 'ArrowLeft';
+        const nextKey = isVertical ? 'ArrowDown' : 'ArrowRight';
+
+        let newIndex: number | null = null;
+
+        if (e.key === nextKey) {
+          newIndex = (i + 1) % tabButtons.length;
+        } else if (e.key === prevKey) {
+          newIndex = (i - 1 + tabButtons.length) % tabButtons.length;
+        } else if (e.key === 'Home') {
+          newIndex = 0;
+        } else if (e.key === 'End') {
+          newIndex = tabButtons.length - 1;
+        }
+
+        if (newIndex !== null) {
+          e.preventDefault();
+          activateTab(newIndex);
+          tabButtons[newIndex].focus();
+        }
+      });
+    });
+  }
+</script>

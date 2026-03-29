@@ -1,0 +1,153 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import PrevNextNav from '../../components/PrevNextNav.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  const sorted = articles.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+  return sorted.map((article, index) => {
+    const prev = index < sorted.length - 1 ? sorted[index + 1] : undefined;
+    const next = index > 0 ? sorted[index - 1] : undefined;
+
+    const related = sorted
+      .filter((a) => a.id !== article.id && a.data.category === article.data.category)
+      .slice(0, 3);
+
+    return {
+      params: { slug: article.id },
+      props: { article, prev, next, related },
+    };
+  });
+}
+
+const { article, prev, next, related } = Astro.props;
+const { Content, headings, remarkPluginFrontmatter } = await render(article);
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+}).format(article.data.date);
+
+const typeLabel =
+  article.data.type === 'case-study'
+    ? 'Case Study'
+    : article.data.type === 'whitepaper'
+      ? 'Whitepaper'
+      : 'Guide';
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com').toString();
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: article.data.title,
+  description: article.data.description,
+  datePublished: article.data.date.toISOString(),
+  author: {
+    '@type': 'Person',
+    name: article.data.author,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Brand',
+  },
+};
+
+const showToc = article.data.toc !== false && headings.length > 0;
+---
+
+<BaseLayout
+  title={`${article.data.title} | Brand`}
+  description={article.data.description}
+  ogImage={article.data.image}
+  ogType="article"
+  jsonLd={articleJsonLd}
+  keywords={article.data.keywords}
+>
+  <Header />
+
+  <main id="main-content">
+    <div class:list={['mx-auto px-4 py-12 sm:px-6 lg:px-8', showToc ? 'max-w-5xl' : 'max-w-3xl']}>
+      <div class:list={[showToc && 'lg:flex lg:gap-10']}>
+        <!-- Main Content -->
+        <article class:list={[showToc ? 'lg:flex-1 lg:min-w-0' : 'mx-auto max-w-3xl']}>
+          <!-- Article Metadata -->
+          <div class="mb-8 border-b border-gray-200 pb-8 dark:border-primary-700">
+            <div class="flex flex-wrap items-center gap-3 text-sm text-primary-500">
+              <span class="rounded bg-accent-500/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-accent-600">
+                {typeLabel}
+              </span>
+              <span>&middot;</span>
+              <time datetime={article.data.date.toISOString()}>{formattedDate}</time>
+              <span>&middot;</span>
+              <span>{article.data.author}</span>
+              {remarkPluginFrontmatter?.minutesRead && (
+                <>
+                  <span>&middot;</span>
+                  <span>{remarkPluginFrontmatter.minutesRead}</span>
+                </>
+              )}
+            </div>
+
+            <h1 class="mt-4 font-heading text-3xl font-bold text-primary-900 dark:text-white md:text-4xl lg:text-5xl">
+              {article.data.title}
+            </h1>
+
+            {article.data.description && (
+              <p class="mt-4 text-lg text-primary-500 dark:text-primary-400">{article.data.description}</p>
+            )}
+          </div>
+
+          <!-- Article Content -->
+          <div class="prose prose-lg prose-primary max-w-none dark:prose-invert">
+            <Content />
+          </div>
+
+          <div class="mt-8">
+            <ShareButtons title={article.data.title} url={canonicalUrl} />
+          </div>
+
+          <PrevNextNav
+            prev={prev ? { title: prev.data.title, href: `/articles/${prev.id}` } : undefined}
+            next={next ? { title: next.data.title, href: `/articles/${next.id}` } : undefined}
+          />
+
+          {related.length > 0 && (
+            <div class="mt-8">
+              <RelatedPosts
+                posts={related.map((r) => ({
+                  title: r.data.title,
+                  href: `/articles/${r.id}`,
+                  description: r.data.description,
+                  date: r.data.date,
+                }))}
+              />
+            </div>
+          )}
+        </article>
+
+        <!-- Sidebar TOC -->
+        {showToc && (
+          <aside class="hidden lg:block lg:w-64 lg:shrink-0">
+            <div class="sticky top-24">
+              <TableOfContents headings={headings} />
+            </div>
+          </aside>
+        )}
+      </div>
+    </div>
+
+    <NewsletterSignup />
+  </main>
+
+  <Footer />
+</BaseLayout>

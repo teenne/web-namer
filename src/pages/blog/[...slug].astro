@@ -1,0 +1,115 @@
+---
+import { getCollection, render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import PrevNextNav from '../../components/PrevNextNav.astro';
+import RelatedPosts from '../../components/RelatedPosts.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+  return sorted.map((post, index) => {
+    const prev = index < sorted.length - 1 ? sorted[index + 1] : undefined;
+    const next = index > 0 ? sorted[index - 1] : undefined;
+
+    // Find related posts by shared tags
+    const related = sorted
+      .filter((p) => p.id !== post.id && p.data.tags.some((t) => post.data.tags.includes(t)))
+      .slice(0, 3);
+
+    return {
+      params: { slug: post.id },
+      props: { post, prev, next, related },
+    };
+  });
+}
+
+const { post, prev, next, related } = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+}).format(post.data.date);
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  ...(post.data.author && {
+    author: {
+      '@type': 'Person',
+      name: post.data.author,
+    },
+  }),
+  publisher: {
+    '@type': 'Organization',
+    name: 'Brand', // TODO: Replace with actual brand name
+  },
+};
+---
+
+<ArticleLayout
+  title={`${post.data.title} | Brand`}
+  description={post.data.description}
+  ogImage={post.data.image}
+  jsonLd={articleJsonLd}
+>
+  <!-- Post Metadata -->
+  <div class="mb-8 border-b border-gray-200 pb-8 dark:border-primary-700">
+    <div class="flex flex-wrap items-center gap-3 text-sm text-primary-500">
+      {post.data.category && (
+        <span class="rounded bg-accent-500/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-accent-600">
+          {post.data.category}
+        </span>
+      )}
+      <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+      {post.data.author && (
+        <>
+          <span>&middot;</span>
+          <span>{post.data.author}</span>
+        </>
+      )}
+      {remarkPluginFrontmatter?.minutesRead && (
+        <>
+          <span>&middot;</span>
+          <span>{remarkPluginFrontmatter.minutesRead}</span>
+        </>
+      )}
+    </div>
+
+    <h1 class="mt-4 font-heading text-3xl font-bold text-primary-900 dark:text-white md:text-4xl lg:text-5xl">
+      {post.data.title}
+    </h1>
+
+    {post.data.description && (
+      <p class="mt-4 text-lg text-primary-500 dark:text-primary-400">
+        {post.data.description}
+      </p>
+    )}
+  </div>
+
+  <!-- Blog Content -->
+  <div class="prose prose-lg prose-primary max-w-none">
+    <Content />
+  </div>
+
+  <PrevNextNav
+    prev={prev ? { title: prev.data.title, href: `/blog/${prev.id}` } : undefined}
+    next={next ? { title: next.data.title, href: `/blog/${next.id}` } : undefined}
+  />
+
+  {related.length > 0 && (
+    <RelatedPosts
+      posts={related.map((r) => ({
+        title: r.data.title,
+        href: `/blog/${r.id}`,
+        description: r.data.description,
+        date: r.data.date,
+      }))}
+    />
+  )}
+</ArticleLayout>

@@ -1,0 +1,45 @@
+---
+interface Feature {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+interface Props {
+  sectionTitle?: string;
+  sectionSubtitle?: string;
+  features: Feature[];
+}
+
+const { sectionTitle, sectionSubtitle, features } = Astro.props;
+---
+
+<section class="py-16 px-4">
+  <div class="mx-auto max-w-6xl">
+    {(sectionTitle || sectionSubtitle) && (
+      <div class="mb-12 text-center">
+        {sectionTitle && (
+          <h2 class="font-heading text-3xl font-bold text-gray-900 dark:text-white">{sectionTitle}</h2>
+        )}
+        {sectionSubtitle && (
+          <p class="mt-3 text-lg text-gray-600 dark:text-gray-400">{sectionSubtitle}</p>
+        )}
+      </div>
+    )}
+
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {features.map((feature) => (
+        <div
+          class="feature-card rounded-xl border border-gray-200 p-6 transition-shadow duration-200 hover:shadow-lg dark:border-primary-700 dark:hover:shadow-primary-900/50"
+          data-feature={feature.title}
+        >
+          {feature.icon && (
+            <div class="mb-4 text-accent-500" set:html={feature.icon} />
+          )}
+          <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-white">{feature.title}</h3>
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

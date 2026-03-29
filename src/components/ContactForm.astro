@@ -1,0 +1,251 @@
+---
+interface ServiceOption {
+  value: string;
+  label: string;
+}
+
+interface ServiceGroup {
+  group: string;
+  options: ServiceOption[];
+}
+
+interface Props {
+  formTitle?: string;
+  showCompanyField?: boolean;
+  serviceOptions?: ServiceGroup[];
+}
+
+const {
+  formTitle = 'Get in Touch',
+  showCompanyField = true,
+  serviceOptions,
+} = Astro.props;
+
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+---
+
+<section class="py-16 px-4">
+  <div class="mx-auto max-w-xl">
+    {formTitle && (
+      <h2 class="mb-8 text-center font-heading text-3xl font-bold text-gray-900 dark:text-white">
+        {formTitle}
+      </h2>
+    )}
+
+    <form id="contact-form" class="space-y-5" novalidate>
+      <!-- Hidden fields -->
+      <input type="hidden" name="access_key" value={accessKey} />
+      <input type="hidden" name="subject" value="New Contact Form Submission" />
+      <input type="hidden" name="from_name" value="Website Contact Form" />
+      <input type="checkbox" name="botcheck" class="hidden" style="display:none" />
+
+      <!-- Name -->
+      <div>
+        <label for="contact-name" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Name <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="contact-name"
+          name="name"
+          required
+          aria-describedby="error-name"
+          class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-shadow focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-primary-600 dark:bg-primary-900 dark:text-white dark:placeholder:text-gray-500"
+          placeholder="Your name"
+        />
+        <p class="mt-1 hidden text-sm text-red-600" id="error-name" data-error="name">Please enter your name.</p>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="contact-email" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Email <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="email"
+          id="contact-email"
+          name="email"
+          required
+          aria-describedby="error-email"
+          class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-shadow focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-primary-600 dark:bg-primary-900 dark:text-white dark:placeholder:text-gray-500"
+          placeholder="you@example.com"
+        />
+        <p class="mt-1 hidden text-sm text-red-600" id="error-email" data-error="email">Please enter a valid email address.</p>
+      </div>
+
+      <!-- Company (optional) -->
+      {showCompanyField && (
+        <div>
+          <label for="contact-company" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Company
+          </label>
+          <input
+            type="text"
+            id="contact-company"
+            name="company"
+            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-shadow focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-primary-600 dark:bg-primary-900 dark:text-white dark:placeholder:text-gray-500"
+            placeholder="Your company"
+          />
+        </div>
+      )}
+
+      <!-- Service Interest -->
+      {serviceOptions && serviceOptions.length > 0 && (
+        <div>
+          <label for="contact-service" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Service Interest
+          </label>
+          <select
+            id="contact-service"
+            name="service"
+            class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-shadow focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-primary-600 dark:bg-primary-900 dark:text-white"
+          >
+            <option value="">Select a service...</option>
+            {serviceOptions.map((group) => (
+              <optgroup label={group.group}>
+                {group.options.map((opt) => (
+                  <option value={opt.value}>{opt.label}</option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </div>
+      )}
+
+      <!-- Message -->
+      <div>
+        <label for="contact-message" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Message <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          id="contact-message"
+          name="message"
+          required
+          rows="5"
+          aria-describedby="error-message"
+          class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition-shadow focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 dark:border-primary-600 dark:bg-primary-900 dark:text-white dark:placeholder:text-gray-500"
+          placeholder="Tell us about your project..."
+        ></textarea>
+        <p class="mt-1 hidden text-sm text-red-600" id="error-message" data-error="message">Please enter a message.</p>
+      </div>
+
+      <!-- hCaptcha -->
+      <div class="h-captcha" data-captcha="true"></div>
+
+      <!-- GDPR Consent -->
+      <div class="flex items-start gap-2">
+        <input
+          type="checkbox"
+          id="contact-consent"
+          name="consent"
+          required
+          aria-describedby="error-consent"
+          class="mt-1 h-4 w-4 rounded border-gray-300 text-accent-500 focus:ring-accent-500"
+        />
+        <label for="contact-consent" class="text-sm text-gray-600 dark:text-gray-400">
+          I agree to the <a href="/privacy" class="font-medium text-accent-600 underline hover:text-accent-500">privacy policy</a> and consent to having my data processed. <span class="text-red-500">*</span>
+        </label>
+      </div>
+      <p class="mt-1 hidden text-sm text-red-600" id="error-consent" data-error="consent">You must agree to the privacy policy.</p>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        id="contact-submit"
+        class="w-full rounded-lg bg-primary-800 py-3 font-semibold text-white transition-colors duration-200 hover:bg-primary-900 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-primary-700 dark:hover:bg-primary-600"
+      >
+        Send Message
+      </button>
+
+      <!-- Form-level error -->
+      <p class="hidden text-center text-sm text-red-600" id="contact-form-error" aria-live="assertive"></p>
+    </form>
+  </div>
+</section>
+
+<script src="https://web3forms.com/client/script.js" async defer></script>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('contact-submit') as HTMLButtonElement;
+  const formError = document.getElementById('contact-form-error') as HTMLParagraphElement;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function showError(field: string, show: boolean) {
+    const el = form.querySelector(`[data-error="${field}"]`) as HTMLElement | null;
+    const input = form.querySelector(`[name="${field}"]`) as HTMLElement | null;
+    if (el) el.classList.toggle('hidden', !show);
+    if (input) input.setAttribute('aria-invalid', String(show));
+  }
+
+  function validate(): boolean {
+    const name = (form.querySelector('[name="name"]') as HTMLInputElement).value.trim();
+    const email = (form.querySelector('[name="email"]') as HTMLInputElement).value.trim();
+    const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement).value.trim();
+    const consent = (form.querySelector('[name="consent"]') as HTMLInputElement).checked;
+
+    let valid = true;
+
+    if (!name) { showError('name', true); valid = false; } else { showError('name', false); }
+    if (!email || !emailRegex.test(email)) { showError('email', true); valid = false; } else { showError('email', false); }
+    if (!message) { showError('message', true); valid = false; } else { showError('message', false); }
+    if (!consent) { showError('consent', true); valid = false; } else { showError('consent', false); }
+
+    return valid;
+  }
+
+  let attempts = 0;
+  const maxAttempts = 3;
+
+  form.addEventListener('submit', async (e: Event) => {
+    e.preventDefault();
+    formError.classList.add('hidden');
+
+    if (!validate()) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: new FormData(form),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        window.location.href = '/contact/thank-you';
+      } else {
+        formError.textContent = data.message || 'Something went wrong. Please try again.';
+        formError.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+      }
+    } catch {
+      attempts++;
+      if (attempts < maxAttempts) {
+        formError.textContent = '';
+        const msgNode = document.createTextNode('Network error. ');
+        const retryBtn = document.createElement('button');
+        retryBtn.type = 'button';
+        retryBtn.id = 'retry-btn';
+        retryBtn.className = 'underline font-medium';
+        retryBtn.textContent = 'Retry';
+        retryBtn.addEventListener('click', () => {
+          formError.classList.add('hidden');
+          form.dispatchEvent(new Event('submit'));
+        });
+        formError.appendChild(msgNode);
+        formError.appendChild(retryBtn);
+        formError.classList.remove('hidden');
+      } else {
+        formError.textContent = 'Network error after multiple attempts. Please check your connection and try again later.';
+        formError.classList.remove('hidden');
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
+    }
+  });
+</script>

@@ -1,0 +1,58 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  href: string;
+  category?: string;
+  image?: string;
+  imageAlt?: string;
+  readingTime?: string;
+}
+
+const { title, description, date, href, category, image, imageAlt, readingTime } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(date);
+---
+
+<a
+  href={href}
+  class="blog-card group block overflow-hidden rounded-xl border border-gray-200 transition-shadow duration-200 hover:shadow-lg dark:border-primary-700 dark:hover:shadow-primary-900/50"
+>
+  {image && (
+    <div class="aspect-video overflow-hidden">
+      <img
+        src={image}
+        alt={imageAlt ?? ''}
+        class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  )}
+
+  <div class="p-5">
+    {category && (
+      <span class="mb-2 inline-block rounded bg-accent-500/10 px-2 py-1 text-xs uppercase tracking-wide text-accent-600 dark:bg-accent-500/20">
+        {category}
+      </span>
+    )}
+
+    <h3 class="font-heading text-lg font-semibold text-gray-900 line-clamp-2 dark:text-white">
+      {title}
+    </h3>
+
+    <p class="mt-2 text-sm text-gray-600 line-clamp-3 dark:text-gray-400">
+      {description}
+    </p>
+
+    <div class="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+      <time datetime={date.toISOString()}>{formattedDate}</time>
+      {readingTime && <span>{readingTime}</span>}
+    </div>
+  </div>
+</a>
