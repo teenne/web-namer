@@ -2,72 +2,151 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import ProblemTabs from '../components/ProblemTabs.astro';
 import FeatureGrid from '../components/FeatureGrid.astro';
 import StatsBar from '../components/StatsBar.astro';
+import FAQ from '../components/FAQ.astro';
 import CTABanner from '../components/CTABanner.astro';
 import Footer from '../components/Footer.astro';
 
-// TODO: Replace with brand-specific feature content
 const features = [
   {
-    title: 'Feature One',
-    description: 'TODO: Describe your first key feature or service offering. Focus on the benefit to the customer.',
-    icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    title: 'Audit Any Figma File',
+    description: 'Run a naming audit against your standard. Get a report of violations with table, JSON, or Markdown output.',
+    icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" stroke-linecap="round" stroke-linejoin="round" /></svg>',
   },
   {
-    title: 'Feature Two',
-    description: 'TODO: Describe your second key feature or service offering. Focus on the benefit to the customer.',
+    title: 'Reviewable Manifest',
+    description: 'Every rename suggestion comes with old name, new name, confidence level, and LLM reasoning. Review before anything changes.',
+    icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+  },
+  {
+    title: 'Confidence Filtering',
+    description: 'Filter suggestions by high, medium, or low confidence. Apply only what you trust. Start conservative.',
+    icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+  },
+  {
+    title: 'Selective Application',
+    description: 'Checkbox each rename in the Figma plugin. Apply only what you approve. Preview and zoom to any layer.',
     icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" /></svg>',
   },
   {
-    title: 'Feature Three',
-    description: 'TODO: Describe your third key feature or service offering. Focus on the benefit to the customer.',
-    icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" /></svg>',
+    title: 'Rollback History',
+    description: 'Undo up to 10 rename operations, individually or in batch. No rename is permanent until you are satisfied.',
+    icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 10h10a5 5 0 010 10H9m-6-10l4-4m-4 4l4 4" stroke-linecap="round" stroke-linejoin="round" /></svg>',
   },
   {
-    title: 'Feature Four',
-    description: 'TODO: Describe your fourth key feature or service offering. Focus on the benefit to the customer.',
-    icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round" /></svg>',
+    title: 'Custom Standards',
+    description: 'Use the built-in Type / Role / Context schema or pass your own Markdown standard. Your rules, your names.',
+    icon: '<svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z" stroke-linecap="round" stroke-linejoin="round" /><circle cx="12" cy="12" r="3" /></svg>',
+  },
+];
+
+const problems = [
+  {
+    id: 'problem-1',
+    label: 'Default names everywhere',
+    description: "Your Figma file has hundreds of layers named 'Frame 1', 'Group 3', and 'Rectangle 45'. AI tools cannot interpret them. Handoff is confusing.",
+    icon: 'file',
+  },
+  {
+    id: 'problem-2',
+    label: 'Manual renaming at scale',
+    description: 'A production file has 500+ layers. Renaming by hand takes hours. It is tedious, error-prone, and nobody wants to do it.',
+    icon: 'clock',
+  },
+  {
+    id: 'problem-3',
+    label: 'No standard enforcement',
+    description: 'Your team has a naming convention in a wiki somewhere. Nobody follows it consistently. There is no automated way to audit or enforce it.',
+    icon: 'warning',
+  },
+  {
+    id: 'problem-4',
+    label: 'AI tools need semantic names',
+    description: "Figma Make and design-to-code tools generate better code from semantic names like 'Button / Primary / Submit' than from 'Frame 47'.",
+    icon: 'code',
   },
 ];
 
 const stats = [
-  { value: '50+', label: 'Projects Delivered' },
-  { value: '10+', label: 'Years Experience' },
-  { value: '99%', label: 'Client Satisfaction' },
-  { value: '24/7', label: 'Support' },
+  { value: '172+', label: 'Automated Tests' },
+  { value: '10x', label: 'Faster Than Manual Renaming' },
+  { value: '90%+', label: 'High-Confidence Acceptance Rate' },
+];
+
+const faqItems = [
+  {
+    question: 'Does FNE modify my Figma file directly?',
+    answer: 'The CLI never modifies your file. It generates a JSON manifest. The Figma plugin applies renames from the manifest, but only the ones you select. Old names are verified before any change.',
+  },
+  {
+    question: 'What if the AI suggests a wrong name?',
+    answer: 'Every suggestion includes a confidence level and reasoning. Use confidence filtering to only apply high-confidence suggestions. Rollback any rename with the undo history (up to 10 operations).',
+  },
+  {
+    question: 'Can I use my own naming convention?',
+    answer: 'Yes. Pass any Markdown file as a naming standard via the --standard flag. The default standard uses Type / Role / Context schema optimized for Figma Make.',
+  },
+  {
+    question: 'Does it work with MCP and REST API?',
+    answer: 'Yes. FNE auto-detects whether to use MCP server or Figma REST API. Both are supported.',
+  },
+  {
+    question: 'How much does it cost to run?',
+    answer: 'FNE is free and open source. You pay for Anthropic API calls (Claude Sonnet 4) when generating manifests. A typical file with 500 layers costs approximately $0.50 to $2.00 in API calls.',
+  },
 ];
 ---
 
 <BaseLayout
-  title="Home | Brand"
-  description="TODO: Write your homepage meta description. Keep it under 160 characters and include your primary keyword."
+  title="FNE: LLM-Powered Figma Layer Naming Audit and Fix"
+  description="Audit and auto-fix Figma layer names against naming standards. CLI generates a reviewable manifest; plugin applies renames safely with rollback."
 >
   <Header />
 
-  <main>
+  <main id="main-content">
     <Hero
-      headline="We build products that solve real problems"
-      subheadline="TODO: Your value proposition here"
-      ctaText="See Our Work"
-      ctaHref="/portfolio"
-      secondaryCtaText="How We Work"
-      secondaryCtaHref="/process"
+      headline="Clean Figma names. 10 minutes. 500 layers."
+      subheadline="FNE uses Claude AI to audit every layer name against your naming standard, then generates a reviewable manifest. You decide what gets renamed. Rollback anything."
+      ctaText="Install FNE"
+      ctaHref="#quickstart"
+      secondaryCtaText="View on GitHub"
+      secondaryCtaHref="https://github.com/halisonworks/fne"
       variant="dark"
     />
 
+    <!-- Problem Section -->
+    <ProblemTabs tabs={problems} />
+
     <FeatureGrid
-      sectionTitle="What We Do"
-      sectionSubtitle="TODO: Brief summary of your core offerings"
+      sectionTitle="How it works"
+      sectionSubtitle="CLI audits. Manifest reviews. Plugin applies. You control everything."
       features={features}
     />
 
     <StatsBar stats={stats} />
 
+    <!-- Quickstart / Install Section -->
+    <section id="quickstart" class="bg-primary-100 px-4 py-16 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-3xl text-center">
+        <h2 class="font-heading text-3xl font-bold text-primary-900">Open Source</h2>
+        <p class="mt-2 text-lg text-primary-600">Free. MIT licensed. The full FNE tool.</p>
+        <div class="mt-8 rounded-lg bg-primary-800 p-4">
+          <code class="font-mono text-sm text-primary-200">npm install -g fne</code>
+        </div>
+        <p class="mt-4 text-sm text-primary-500">
+          You pay for Anthropic API calls when generating manifests. A typical file with 500 layers costs $0.50 to $2.00.
+        </p>
+      </div>
+    </section>
+
+    <FAQ items={faqItems} />
+
     <CTABanner
-      headline="Ready to get started?"
-      ctaText="Get in Touch"
-      ctaHref="/contact"
+      headline="Your design-to-code pipeline is only as good as your layer names."
+      ctaText="Install FNE"
+      ctaHref="#quickstart"
       variant="accent"
     />
   </main>

@@ -15,8 +15,8 @@ interface Props {
 
 const {
   title,
-  description = '', // TODO: Set a default brand description
-  ogImage = '', // TODO: Set a default OG image path
+  description = 'Audit and auto-fix Figma layer names against naming standards. CLI generates a reviewable manifest; plugin applies renames safely with rollback.',
+  ogImage = '',
   ogType = 'website',
   datePublished,
   jsonLd,
@@ -26,36 +26,23 @@ const {
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 
-// TODO: Replace placeholder values with your brand information
 const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Brand', // TODO: Replace with organization name
-  url: Astro.site?.href ?? 'https://example.com', // TODO: Update with production URL
-  logo: '', // TODO: Add logo URL
+  name: 'Halisonworks AS',
+  url: 'https://fne.halisonworks.com',
+  logo: '',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '', // TODO: Add street address
-    addressLocality: '', // TODO: Add city
-    postalCode: '', // TODO: Add postal code
-    addressCountry: '', // TODO: Add country code (e.g. "US")
+    addressCountry: 'NO',
   },
-  telephone: '', // TODO: Add phone number
-  email: '', // TODO: Add contact email
+  email: 'privacy@halisonworks.com',
 };
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <script is:inline>
-      (function() {
-        const theme = localStorage.getItem('theme');
-        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.documentElement.classList.add('dark');
-        }
-      })();
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
@@ -75,7 +62,7 @@ const organizationJsonLd = {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
@@ -95,7 +82,7 @@ const organizationJsonLd = {
     {ogImage && <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />}
 
     <!-- Theme -->
-    <meta name="theme-color" content="#0ea5e9" />
+    <meta name="theme-color" content="#0d99ff" />
 
     <!-- Organization JSON-LD -->
     <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
@@ -109,12 +96,11 @@ const organizationJsonLd = {
         is:inline
         define:vars={{ phKey: import.meta.env.PUBLIC_POSTHOG_KEY }}
       >
-        // PostHog will be initialized by tracking.ts
         window.__POSTHOG_KEY = phKey;
       </script>
     )}
   </head>
-  <body class="min-h-screen bg-white dark:bg-dark-bg">
+  <body class="min-h-screen bg-[#f5f5f5]">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-accent-500 focus:px-4 focus:py-2 focus:text-white focus:outline-none">
       Skip to main content
     </a>

@@ -5,36 +5,53 @@ import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout
-  title="Privacy Policy | Brand"
-  description="Read our privacy policy to understand how we handle your data."
+  title="Privacy Policy | FNE"
+  description="Privacy policy for the Figma Naming Enforcer (FNE) CLI tool and Figma plugin."
 >
   <Header />
-  <main>
+  <main id="main-content">
     <section class="px-4 py-16 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-3xl">
         <h1 class="font-heading text-4xl font-bold text-primary-900">Privacy Policy</h1>
-        <p class="mt-4 text-sm text-primary-500">Last updated: January 1, 2025</p>
+        <p class="mt-4 text-sm text-primary-500">Effective Date: March 26, 2026</p>
         <div class="prose prose-primary mt-8 max-w-none">
-          <h2>1. Information We Collect</h2>
-          <p>TODO: Describe what personal information you collect (name, email, etc.).</p>
+          <p>Halisonworks AS ("we," "us," "our") develops the Figma Naming Enforcer (FNE). This Privacy Policy explains data handling.</p>
 
-          <h2>2. How We Use Your Information</h2>
-          <p>TODO: Explain how collected information is used.</p>
+          <h2>Data Controller</h2>
+          <p>Halisonworks AS, Norway. Contact: privacy@halisonworks.com</p>
 
-          <h2>3. Cookies</h2>
-          <p>TODO: Describe your cookie usage and tracking practices.</p>
+          <h2>CLI Tool</h2>
+          <ul>
+            <li>The CLI reads your Figma file via the Figma REST API or MCP using your personal access token.</li>
+            <li>Layer names and structure are sent to the Anthropic API (Claude) for analysis.</li>
+            <li>The generated rename manifest is saved locally on your machine.</li>
+            <li>Halisonworks does not receive, store, or have access to your Figma data or API tokens.</li>
+          </ul>
 
-          <h2>4. Third-Party Services</h2>
-          <p>TODO: List third-party services (analytics, form processing, etc.) and how they handle data.</p>
+          <h2>Figma Plugin</h2>
+          <ul>
+            <li>The plugin runs within the Figma environment.</li>
+            <li>It reads and modifies layer names only based on manifests you import.</li>
+            <li>No data is sent to Halisonworks servers.</li>
+          </ul>
 
-          <h2>5. Data Retention</h2>
-          <p>TODO: Explain how long you retain personal data.</p>
+          <h2>Marketing Website</h2>
+          <p>Analytics: pages visited, session duration (PostHog).</p>
 
-          <h2>6. Your Rights</h2>
-          <p>TODO: Describe user rights (access, deletion, portability, etc.).</p>
+          <h2>Third-Party Services</h2>
+          <table>
+            <thead>
+              <tr><th>Service</th><th>Purpose</th><th>Data Shared</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Figma API</td><td>Read Figma file structure</td><td>Layer names, structure (via your token)</td></tr>
+              <tr><td>Anthropic (Claude)</td><td>LLM analysis for naming suggestions</td><td>Layer names, naming standard (via your API key)</td></tr>
+            </tbody>
+          </table>
+          <p>Your API keys are stored locally in environment variables or config files. They are never transmitted to Halisonworks.</p>
 
-          <h2>7. Contact Us</h2>
-          <p>TODO: Provide contact information for privacy-related inquiries.</p>
+          <h2>Your Rights</h2>
+          <p>CLI and plugin data stays on your machine and in your Figma environment. For website data, contact privacy@halisonworks.com.</p>
         </div>
       </div>
     </section>

@@ -5,33 +5,35 @@ import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout
-  title="Terms & Conditions | Brand"
-  description="Read our terms and conditions."
+  title="Terms of Service | FNE"
+  description="Terms of service for the Figma Naming Enforcer (FNE) CLI tool and Figma plugin."
 >
   <Header />
-  <main>
+  <main id="main-content">
     <section class="px-4 py-16 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-3xl">
-        <h1 class="font-heading text-4xl font-bold text-primary-900">Terms &amp; Conditions</h1>
-        <p class="mt-4 text-sm text-primary-500">Last updated: January 1, 2025</p>
+        <h1 class="font-heading text-4xl font-bold text-primary-900">Terms of Service</h1>
+        <p class="mt-4 text-sm text-primary-500">Effective Date: March 26, 2026</p>
         <div class="prose prose-primary mt-8 max-w-none">
-          <h2>1. Agreement to Terms</h2>
-          <p>TODO: Write your terms and conditions. By accessing this website, you agree to be bound by these terms of service.</p>
+          <h2>1. License</h2>
+          <p>FNE is distributed under the MIT License.</p>
 
-          <h2>2. Use License</h2>
-          <p>TODO: Describe permitted use of your website and services.</p>
+          <h2>2. Disclaimer</h2>
+          <ul>
+            <li>Rename suggestions are AI-generated and should be reviewed before applying.</li>
+            <li>The plugin includes rollback functionality, but you should verify renamed layers.</li>
+            <li>Halisonworks AS is not liable for changes made to your Figma files.</li>
+            <li>The tool is provided "as is" without warranty.</li>
+          </ul>
 
-          <h2>3. Disclaimer</h2>
-          <p>TODO: Add your disclaimer information.</p>
+          <h2>3. API Costs</h2>
+          <ul>
+            <li>Anthropic API costs for LLM analysis are your responsibility.</li>
+            <li>Figma API access is subject to Figma's terms and rate limits.</li>
+          </ul>
 
-          <h2>4. Limitations</h2>
-          <p>TODO: Describe limitations of liability.</p>
-
-          <h2>5. Revisions</h2>
-          <p>TODO: Describe how terms may be revised.</p>
-
-          <h2>6. Governing Law</h2>
-          <p>TODO: Specify applicable jurisdiction and governing law.</p>
+          <h2>4. Governing Law</h2>
+          <p>Norwegian law. Oslo courts.</p>
         </div>
       </div>
     </section>

@@ -1,69 +1,85 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import StatsBar from '../components/StatsBar.astro';
 import CTABanner from '../components/CTABanner.astro';
 import Footer from '../components/Footer.astro';
-
-const stats = [
-  { value: '50+', label: 'Projects Delivered' },
-  { value: '10+', label: 'Years Experience' },
-  { value: '99%', label: 'Client Satisfaction' },
-  { value: '24/7', label: 'Support' },
-];
 ---
 
 <BaseLayout
-  title="About Us | Brand"
-  description="Learn about our team, mission, and values."
+  title="About FNE | Figma Naming Enforcer"
+  description="FNE is an LLM-powered tool that audits and auto-fixes Figma layer names against natural language naming standards. Open source, MIT licensed."
 >
   <Header />
-  <main>
+  <main id="main-content">
     <section class="bg-primary-50 px-4 py-16 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-4xl text-center">
-        <h1 class="font-heading text-4xl font-bold text-primary-900 md:text-5xl">About Us</h1>
-        <p class="mx-auto mt-4 max-w-2xl text-lg text-primary-500">
-          We're a team dedicated to building exceptional solutions.
+        <h1 class="font-heading text-4xl font-bold text-primary-900 md:text-5xl">About FNE</h1>
+        <p class="mx-auto mt-4 max-w-2xl text-lg text-primary-600">
+          LLM-powered Figma layer naming audit and fix. Built for designers who care about file quality.
         </p>
       </div>
     </section>
 
     <section class="px-4 py-16 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-3xl">
-        <h2 class="font-heading text-2xl font-bold text-primary-900">Our Story</h2>
+        <h2 class="font-heading text-2xl font-bold text-primary-900">The Problem</h2>
         <div class="mt-4 space-y-4 text-primary-600">
-          <p>TODO: Write your company story here. Share your mission, vision, and what drives your team.</p>
-          <p>TODO: Describe your approach and what makes you different from competitors.</p>
+          <p>
+            Figma files accumulate hundreds of poorly named layers. Defaults like "Frame 1,"
+            appearance-based names like "blue button," and vague labels like "container" create
+            cascading problems. AI design-to-code tools cannot interpret them. Manual renaming
+            does not scale. Teams cannot enforce standards.
+          </p>
+          <p>
+            FNE uses Claude AI to analyze every layer name against a configurable naming standard,
+            then generates a reviewable manifest of suggested renames. A companion Figma plugin
+            applies those renames safely with preview, selective application, and rollback.
+          </p>
         </div>
 
-        <h2 class="mt-12 font-heading text-2xl font-bold text-primary-900">Our Values</h2>
+        <h2 class="mt-12 font-heading text-2xl font-bold text-primary-900">Key Insight</h2>
+        <div class="mt-4 space-y-4 text-primary-600">
+          <p>
+            Separate read from write. The CLI never modifies your Figma file. All changes go
+            through a human-reviewable JSON manifest before execution. The manifest is the contract
+            between the CLI and the plugin.
+          </p>
+        </div>
+
+        <h2 class="mt-12 font-heading text-2xl font-bold text-primary-900">Principles</h2>
         <div class="mt-6 grid gap-6 sm:grid-cols-2">
           <div class="rounded-lg border border-primary-200 p-6">
-            <h3 class="font-heading text-lg font-semibold text-primary-900">Innovation</h3>
-            <p class="mt-2 text-sm text-primary-500">TODO: Describe this value.</p>
+            <h3 class="font-heading text-lg font-semibold text-primary-900">Manifest as Contract</h3>
+            <p class="mt-2 text-sm text-primary-600">All changes are reviewed as JSON before execution. Nothing is hidden.</p>
           </div>
           <div class="rounded-lg border border-primary-200 p-6">
-            <h3 class="font-heading text-lg font-semibold text-primary-900">Quality</h3>
-            <p class="mt-2 text-sm text-primary-500">TODO: Describe this value.</p>
+            <h3 class="font-heading text-lg font-semibold text-primary-900">Non-Destructive</h3>
+            <p class="mt-2 text-sm text-primary-600">The plugin verifies old names match before renaming. Rollback up to 10 operations.</p>
           </div>
           <div class="rounded-lg border border-primary-200 p-6">
-            <h3 class="font-heading text-lg font-semibold text-primary-900">Transparency</h3>
-            <p class="mt-2 text-sm text-primary-500">TODO: Describe this value.</p>
+            <h3 class="font-heading text-lg font-semibold text-primary-900">Confidence Tiers</h3>
+            <p class="mt-2 text-sm text-primary-600">Users control risk tolerance via high, medium, and low confidence filtering.</p>
           </div>
           <div class="rounded-lg border border-primary-200 p-6">
-            <h3 class="font-heading text-lg font-semibold text-primary-900">Partnership</h3>
-            <p class="mt-2 text-sm text-primary-500">TODO: Describe this value.</p>
+            <h3 class="font-heading text-lg font-semibold text-primary-900">Open Source</h3>
+            <p class="mt-2 text-sm text-primary-600">MIT licensed. Free CLI and Figma plugin. Design system maintainers need to trust the tools that modify their files.</p>
           </div>
+        </div>
+
+        <h2 class="mt-12 font-heading text-2xl font-bold text-primary-900">Built by Halisonworks</h2>
+        <div class="mt-4 space-y-4 text-primary-600">
+          <p>
+            FNE is built and maintained by Halisonworks AS, based in Norway.
+            We build tools for designers and developers who care about quality at the detail level.
+          </p>
         </div>
       </div>
     </section>
 
-    <StatsBar stats={stats} />
-
     <CTABanner
-      headline="Want to work with us?"
-      ctaText="Get in Touch"
-      ctaHref="/contact"
+      headline="Clean Figma names. 10 minutes. 500 layers."
+      ctaText="Install FNE"
+      ctaHref="#quickstart"
       variant="accent"
     />
   </main>
