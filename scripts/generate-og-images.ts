@@ -204,6 +204,13 @@ async function main() {
   }
 
   const fonts = loadFonts();
+
+  if (fonts.length === 0) {
+    console.log("No fonts available. Skipping OG image generation.");
+    console.log("Add .ttf files to scripts/fonts/ to enable OG images.");
+    return;
+  }
+
   const cache = readCache();
   const newCache: Record<string, string> = {};
 
