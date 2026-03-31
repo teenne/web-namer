@@ -1,10 +1,84 @@
 ---
-// src/components/PostHog.astro
+/**
+ * PostHog Analytics Component
+ *
+ * Drop this into src/components/PostHog.astro in your web-master template.
+ * Then include it in BaseLayout.astro inside the <head> tag.
+ *
+ * It automatically:
+ * - Derives site_name from Astro.site (set in astro.config.mjs)
+ * - Sets site_type via prop (defaults to "website")
+ * - Skips tracking on localhost / dev ports
+ * - Registers site_name and site_type as super properties on every event
+ * - Registers entity as a group property for filtering by business entity
+ */
+
+interface Props {
+  /** "website" for marketing sites, "webapp" for authenticated apps */
+  siteType?: "website" | "webapp";
+  /** Override the auto-detected site name (defaults to domain from Astro.site) */
+  siteName?: string;
+  /** Business entity that owns this site, e.g. "BAS Trust Systems", "Halisonworks" */
+  entity?: string;
+}
+
+const {
+  siteType = "website",
+  siteName,
+  entity,
+} = Astro.props;
+
+// Derive domain from astro.config.mjs `site` value
+const domain = Astro.site ? new URL(Astro.site).hostname : "";
+const resolvedSiteName = siteName || domain;
 ---
-<script is:inline>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags resetGroups onFeatureFlags addFeatureFlagsHandler onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_VzAE2jY83bW2TenkxRzdgEkvLEfLOdfHRvXpU0z1zSa', {
-        api_host: 'https://eu.i.posthog.com',
-        defaults: '2026-01-30'
-    })
+
+<!-- PostHog Analytics -->
+<script
+  is:inline
+  data-site-name={resolvedSiteName}
+  data-site-type={siteType}
+  data-entity={entity || ""}
+>
+  // Skip tracking in development (localhost, 127.0.0.1, or custom dev ports)
+  (function () {
+    var host = window.location.hostname;
+    var port = window.location.port;
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      (port && parseInt(port) >= 4000 && parseInt(port) <= 5200)
+    ) {
+      return;
+    }
+
+    // Get config from data attributes
+    var script = document.currentScript;
+    var siteName = script.getAttribute("data-site-name");
+    var siteType = script.getAttribute("data-site-type");
+    var entity = script.getAttribute("data-entity");
+
+    // PostHog snippet (EU Cloud)
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+
+    posthog.init("phc_B0AHBh9XykJtzMkBRpLOMT11WBJfV3pNsLDqzh1zAyB", {
+      api_host: "https://eu.i.posthog.com",
+      defaults: "2026-01-30",
+      person_profiles: "identified_only",
+      capture_pageview: true,
+      capture_pageleave: true,
+    });
+
+    // Register super properties (sent with every event automatically)
+    posthog.register({
+      site_name: siteName,
+      site_type: siteType,
+      site_domain: window.location.hostname,
+    });
+
+    // Register entity as a group if provided
+    if (entity) {
+      posthog.register({ entity: entity });
+    }
+  })();
 </script>
