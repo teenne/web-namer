@@ -1,7 +1,7 @@
 ---
 title: "Welcome to Our Blog"
 description: "Introducing our blog where we share insights and updates."
-date: 2025-01-01
+date: 2026-03-15
 author: "Your Name"
 category: news
 draft: false
